@@ -1,20 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import DefaultLayout from '../../layout/DefaultLayout';
-import DatePickerOne from '../../components/Forms/DatePicker/DatePickerOne';
-import flatpickr from 'flatpickr';
-import moment from 'moment';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-
+import moment from 'moment';
 
 const FormElements: React.FC = () => {
   const [data, setData] = useState<any>(null);
   const [today, setToday] = useState<string>('');
   const [tomorrow, setTomorrow] = useState<string>('');
-  const [date, setDate] = useState<string>(
-    //  ngay
-  );
+  const [date, setDate] = useState<string>('');
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
   const test = localStorage.getItem('user');
   const parsedTest = test ? JSON.parse(test) : null;
@@ -23,31 +19,11 @@ const FormElements: React.FC = () => {
 
   useEffect(() => {
     const todayDate = new Date();
-    const formattedDate = `${todayDate.getDate()}/${todayDate.getMonth() + 1}/${todayDate.getFullYear()}`;
+    const formattedDate = `${todayDate.getDate()}/${
+      todayDate.getMonth() + 1
+    }/${todayDate.getFullYear()}`;
     setDate(formattedDate);
   }, []);
-
-  useEffect(() => {
-    // Init flatpickr
-    flatpickr('.form-datepicker', {
-      mode: 'single',
-      static: true,
-      monthSelectorType: 'static',
-      dateFormat: 'M j, Y',
-      prevArrow:
-        '<svg className="fill-current" width="7" height="11" viewBox="0 0 7 11"><path d="M5.4 10.8l1.4-1.4-4-4 4-4L5.4 0 0 5.4z" /></svg>',
-      nextArrow:
-        '<svg className="fill-current" width="7" height="11" viewBox="0 0 7 11"><path d="M1.4 10.8L0 9.4l4-4-4-4L1.4 0l5.4 5.4z" /></svg>',
-    });
-
-    
-  }, []);
-
-
-  
-  // @workspace call api get https://report-work.onrender.com/report truyen vao date va idUser
-  const [loading, setLoading] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(new Date());
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
@@ -57,10 +33,6 @@ const FormElements: React.FC = () => {
     return moment(date).format('DD/MM/YYYY');
   };
 
-  console.log('Ngày đã chọn:', formatDate(selectedDate));
-  
-
-  
   useEffect(() => {
     if (id && date) {
       fetch(
@@ -77,36 +49,32 @@ const FormElements: React.FC = () => {
           console.error('Error fetching report data:', error);
         });
     }
-  }, [date, id]);
+  }, [date, id, selectedDate]);
 
-  
-   console.log("selectedDate", selectedDate);
-  
-  const handleClick = async (event: React.MouseEvent<HTMLButtonElement>) => { 
-    
+  const handleClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     try {
-  //  call api https://report-work.onrender.com/report/input
-      const response = await fetch('https://report-work.onrender.com/report/input', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        'https://report-work.onrender.com/report/input',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            idUser: id,
+            msnv: username,
+            name: username,
+            date: formatDate(selectedDate),
+            today: today,
+            tomorrow: tomorrow,
+          }),
         },
-        body: JSON.stringify({
-          idUser: id,
-          msnv: username,
-          name: username,
-          date: formatDate(selectedDate), 
-          today: today,
-          tomorrow: tomorrow,
-        }),
-      });
+      );
       const data = await response.json();
       setData(data);
       console.log(data);
-
-    }
-    catch (error: any) {
+    } catch (error: any) {
       console.log(error);
     }
   };
@@ -118,7 +86,7 @@ const FormElements: React.FC = () => {
       <div className="grid grid-cols-1 gap-9 sm:grid-cols-1">
         <div className="flex flex-col gap-9">
           {/* Date Picker Field */}
-          <div className="rounded-sm border border-gray-300 bg-white shadow-md dark:border-gray-700 dark:bg-gray-800">
+          <div className="rounded-sm border border-gray-300 bg-white shadow-md dark:border-gray-700 dark:bg-gray-800 dark:bg-black">
             <div className="border-b border-gray-300 py-4 px-6 dark:border-gray-700">
               <h3 className="font-medium text-black dark:text-white">
                 Ngày báo cáo
@@ -134,7 +102,7 @@ const FormElements: React.FC = () => {
                     selected={selectedDate}
                     onChange={handleDateChange}
                     dateFormat="dd/MM/yyyy"
-                    className="w-full px-5 py-3 border-[1.5px] border-stroke rounded focus:border-primary focus:outline-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary shadow-md hover:shadow-lg transition-shadow duration-200"
+                    className="w-full px-5 py-3 border-[1.5px] border-stroke rounded focus:border-primary focus:outline-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary shadow-md hover:shadow-lg transition-shadow duration-200 dark:text-white"
                   />
 
                   <div className="pointer-events-none absolute inset-0 left-auto right-5 flex items-center">
@@ -157,15 +125,15 @@ const FormElements: React.FC = () => {
           </div>
 
           {/* Report Fields */}
-          <div className="rounded-sm border border-gray-300 bg-white shadow-md dark:border-gray-700 dark:bg-gray-800">
+          <div className="rounded-sm border border-gray-300 bg-white shadow-md dark:border-gray-700 dark:bg-gray-800 dark:bg-black">
             <div className="border-b border-gray-300 py-4 px-6 dark:border-gray-700">
               <h3 className="font-medium text-black dark:text-white">
                 Báo cáo công việc
               </h3>
             </div>
-            <div className="flex flex-col gap-5 p-6">
+            <div className="flex flex-col gap-5 p-6 dark:bg-black">
               <div>
-                <label className="mb-3 block text-black dark:text-white">
+                <label className="mb-3 block text-black dark:text-white dark:bg-black">
                   Báo cáo công việc hôm nay
                 </label>
                 <textarea
@@ -173,7 +141,7 @@ const FormElements: React.FC = () => {
                   onChange={(e) => setToday(e.target.value)}
                   rows={6}
                   placeholder="Default textarea"
-                  className="w-full rounded-lg border border-gray-300 bg-transparent py-3 px-5 text-black outline-none transition focus:border-blue-500 active:border-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-blue-500"
+                  className="w-full rounded-lg border border-gray-300 bg-transparent py-3 px-5 text-black outline-none transition focus:border-blue-500 active:border-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:bg-black dark:focus:border-blue-500"
                 ></textarea>
               </div>
 
