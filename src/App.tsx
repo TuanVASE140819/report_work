@@ -34,10 +34,11 @@ function App() {
     <>
       <Routes>
         <Route
+          index
           element={
             <>
               <PageTitle title="Signup | TailAdmin - Tailwind CSS Admin Dashboard Template" />
-              <SignUp />
+              <Tables />
             </>
           }
         />
@@ -78,7 +79,6 @@ function App() {
           }
         />
         <Route
-          index
           path="/tables"
           element={
             <>
