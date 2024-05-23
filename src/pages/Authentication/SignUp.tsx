@@ -36,7 +36,7 @@ const SignUp: React.FC = () => {
        //  chuyển hướng đến trang dashboard
 
        //  console.log('user', response.data);
-       window.location.href = '/tables';
+       window.location.href = '/ManagementUser';
      } catch (error) {
        console.error(error);
      }
