@@ -25,11 +25,11 @@ const FormElements: React.FC = () => {
     setDate(formattedDate);
   }, []);
 
-  const handleDateChange = (date) => {
+  const handleDateChange = (date: any) => {
     setSelectedDate(date);
   };
 
-  const formatDate = (date) => {
+  const formatDate = (date: any) => {
     return moment(date).format('DD/MM/YYYY');
   };
 
