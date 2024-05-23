@@ -29,7 +29,8 @@ const FormLayout = () => {
       method: 'POST',
       responseType: 'blob',
       data: {
-        date: formatDate(selectedDate), // Sử dụng ngày được chọn
+        //  date gửi về string
+        date: formatDate(selectedDate) as string,
         note: 'Ghi chú của bạn ở đây', // Ghi chú thực tế
       },
     })
